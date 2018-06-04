@@ -7,7 +7,7 @@ use Omnipay\Common\Currency;
 
 class CompletePurchaseRequest extends AbstractRequest
 {
-    protected $endpoint = 'https://www.mobile88.com/epayment/enquiry.asp';
+    protected $endpoint = 'https://payment.ipay88.com.my/epayment/enquiry.asp';
 
     public function getData()
     {
