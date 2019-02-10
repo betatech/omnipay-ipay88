@@ -4,6 +4,14 @@ namespace Omnipay\IPay88\Message;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
+	
+	public function getPaymentId() {
+		return $this->getParameter('paymentId');
+	}
+	
+	public function setPaymentId($value) {
+		return $this->setParameter('paymentId', $value);
+	}
 
     public function getBackendUrl()
     {
