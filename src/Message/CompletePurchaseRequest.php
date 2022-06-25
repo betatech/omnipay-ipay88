@@ -33,11 +33,31 @@ class CompletePurchaseRequest extends AbstractRequest
 		if ($this->getRequeryNeeded()) {
 			$endpoint = $this->getTestMode() ? $this->getSandboxRequeryUrl() : $this->endpoint;
 			
-			$data['ReQueryStatus'] = $this->httpClient->post($endpoint, null, [
-				'MerchantCode' => $this->getMerchantCode(),
-				'RefNo' => $data['RefNo'],
-				'Amount' => $data['Amount'],
-			])->send()->getBody(true);
+			// $data['ReQueryStatus'] = $this->httpClient->post($endpoint, null, [
+			// 	'MerchantCode' => $this->getMerchantCode(),
+			// 	'RefNo' => $data['RefNo'],
+			// 	'Amount' => $data['Amount'],
+			// ])->send()->getBody(true);
+            
+            // if httpClient->post produces bug, use this instead
+            $query = $endpoint . "?MerchantCode=" . $this->getMerchantCode() . "&RefNo=" . $data['RefNo'] . "&Amount=" . $data['Amount'];
+            $url = parse_url($query);
+            $host = $url["host"];
+            $sslhost = "ssl://".$host;
+            $path = $url["path"] . "?" . $url["query"]; $timeout = 5;
+            $fp = fsockopen ($sslhost, 443, $errno, $errstr, $timeout); 
+            if ($fp) {
+                fputs ($fp, "GET $path HTTP/1.0\nHost: " . $host . "\n\n"); 
+                while (!feof($fp)) {
+                    $buf .= fgets($fp, 128);
+                }
+                $lines = preg_split("/\n/", $buf); 
+                $Result = $lines[count($lines)-1]; fclose($fp);
+                $data['ReQueryStatus'] = $Result;
+            } else {
+                # enter error handing code here
+                $data['ReQueryStatus'] = $Result;
+            }
 		} else {
 			$data = $this->getData();
 		}

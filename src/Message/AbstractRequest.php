@@ -93,7 +93,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     protected function createSignatureFromString($fullStringToHash)
     {
-        return base64_encode($this->hex2bin(sha1($fullStringToHash)));
+        return hash('sha256',$fullStringToHash); // edited
+        // return base64_encode($this->hex2bin(sha1($fullStringToHash)));
     }
 
     private function hex2bin($hexSource)
